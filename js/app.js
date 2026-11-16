@@ -1,5 +1,5 @@
 /*
-   SITTA Vue — app.js
+   SITTA Vue   app.js
    Inisialisasi Vue root. Root memegang seluruh state (sumber kebenaran);
    komponen menerima data lewat props dan mengirim perubahan lewat event.
    */
@@ -52,7 +52,7 @@ var app = new Vue({
       immediate: true,
       handler: function (t) {
         var nama = { stok: "Stok", tracking: "Tracking DO", order: "Pemesanan" }[t];
-        document.title = nama + " — SITTA";
+        document.title = nama + "   SITTA";
         try {
           if (window.location.hash.replace("#", "") !== t) window.history.replaceState(null, "", "#" + t);
         } catch (e) { /* diabaikan bila dibuka dari file:// */ }

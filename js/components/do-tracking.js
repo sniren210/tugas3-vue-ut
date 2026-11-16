@@ -1,4 +1,4 @@
-/* <do-tracking> — pencarian DO (nomor / NIM), detail perjalanan, tambah progress.
+/* <do-tracking>   pencarian DO (nomor / NIM), detail perjalanan, tambah progress.
    Props : data (array DO), paket (untuk nama paket), fokusNomor (DO yang baru dibuat)
    Event : progress { nomor, keterangan, status }
    Keyboard: Enter = cari, Esc = reset pencarian, Enter di kolom progress = tambah. */
@@ -73,7 +73,7 @@ Vue.component("do-tracking", {
   methods: {
     namaPaket: function (kode) {
       var p = this.paket.find(function (x) { return x.kode === kode; });
-      return p ? kode + " — " + p.nama : kode;
+      return p ? kode + "   " + p.nama : kode;
     },
 
     /* Enter */

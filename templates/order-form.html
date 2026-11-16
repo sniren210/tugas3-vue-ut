@@ -10,72 +10,135 @@
       <div class="kisi-form">
         <div class="kolom">
           <label for="in-nomor">Nomor DO (otomatis)</label>
-          <input id="in-nomor" :value="nomorDo" readonly>
+          <input id="in-nomor" :value="nomorDo" readonly />
         </div>
 
         <div class="kolom" :class="{ 'ada-galat': tampilGalat('nim') }">
           <label for="in-nim">NIM</label>
-          <input id="in-nim" v-model.trim="form.nim" inputmode="numeric" placeholder="9 digit" @blur="sentuh('nim')" autocomplete="off">
-          <p class="galat" v-if="tampilGalat('nim')">{{ tampilGalat('nim') }}</p>
+          <input
+            id="in-nim"
+            v-model.trim="form.nim"
+            inputmode="numeric"
+            placeholder="9 digit"
+            @blur="sentuh('nim')"
+            autocomplete="off"
+          />
+          <p class="galat" v-if="tampilGalat('nim')">
+            {{ tampilGalat('nim') }}
+          </p>
         </div>
 
         <div class="kolom" :class="{ 'ada-galat': tampilGalat('nama') }">
           <label for="in-nama">Nama mahasiswa</label>
-          <input id="in-nama" v-model="form.nama" @blur="sentuh('nama')" autocomplete="off">
-          <p class="galat" v-if="tampilGalat('nama')">{{ tampilGalat('nama') }}</p>
+          <input
+            id="in-nama"
+            v-model="form.nama"
+            @blur="sentuh('nama')"
+            autocomplete="off"
+          />
+          <p class="galat" v-if="tampilGalat('nama')">
+            {{ tampilGalat('nama') }}
+          </p>
         </div>
 
         <div class="kolom" :class="{ 'ada-galat': tampilGalat('ekspedisi') }">
           <label for="in-ekspedisi">Ekspedisi</label>
-          <select id="in-ekspedisi" v-model="form.ekspedisi" @blur="sentuh('ekspedisi')">
+          <select
+            id="in-ekspedisi"
+            v-model="form.ekspedisi"
+            @blur="sentuh('ekspedisi')"
+          >
             <option value="">Pilih jenis pengiriman</option>
-            <option v-for="p in ekspedisi" :key="p.kode" :value="p.kode">JNE {{ p.nama }}</option>
+            <option v-for="p in ekspedisi" :key="p.kode" :value="p.kode">
+              JNE {{ p.nama }}
+            </option>
           </select>
-          <p class="galat" v-if="tampilGalat('ekspedisi')">{{ tampilGalat('ekspedisi') }}</p>
+          <p class="galat" v-if="tampilGalat('ekspedisi')">
+            {{ tampilGalat('ekspedisi') }}
+          </p>
         </div>
 
         <div class="kolom penuh" :class="{ 'ada-galat': tampilGalat('paket') }">
           <label for="in-paket">Paket bahan ajar</label>
           <select id="in-paket" v-model="form.paket" @blur="sentuh('paket')">
             <option value="">Pilih paket</option>
-            <option v-for="p in paket" :key="p.kode" :value="p.kode">{{ p.kode }} — {{ p.nama }}</option>
+            <option v-for="p in paket" :key="p.kode" :value="p.kode">
+              {{ p.kode }} {{ p.nama }}
+            </option>
           </select>
-          <p class="galat" v-if="tampilGalat('paket')">{{ tampilGalat('paket') }}</p>
+          <p class="galat" v-if="tampilGalat('paket')">
+            {{ tampilGalat('paket') }}
+          </p>
         </div>
 
         <!-- Detail isi paket muncul di bawah <select> -->
         <div class="penuh" v-if="paketTerpilih">
           <div class="detail-paket">
-            <h3>{{ paketTerpilih.kode }} — {{ paketTerpilih.nama }} ({{ isiPaket.length }} bahan ajar)</h3>
+            <h3>
+              {{ paketTerpilih.kode }} {{ paketTerpilih.nama }} ({{
+              isiPaket.length }} bahan ajar)
+            </h3>
             <ul>
               <li v-for="(b, index) in isiPaket" :key="b.kode">
-                <span>{{ index + 1 }}. <strong>{{ b.kode }}</strong> — {{ b.judul }}</span>
+                <span
+                  >{{ index + 1 }}. <strong>{{ b.kode }}</strong> {{ b.judul
+                  }}</span
+                >
                 <span v-if="b.harga !== null">{{ b.harga | rupiah }}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div class="kolom" :class="{ 'ada-galat': tampilGalat('tanggalKirim') }">
+        <div
+          class="kolom"
+          :class="{ 'ada-galat': tampilGalat('tanggalKirim') }"
+        >
           <label for="in-tanggal">Tanggal kirim</label>
           <div class="baris-sebaris">
-            <input id="in-tanggal" type="date" v-model="form.tanggalKirim" @blur="sentuh('tanggalKirim')">
-            <button type="button" class="tombol tombol-garis tombol-kecil" @click="isiHariIni">Hari ini</button>
+            <input
+              id="in-tanggal"
+              type="date"
+              v-model="form.tanggalKirim"
+              @blur="sentuh('tanggalKirim')"
+            />
+            <button
+              type="button"
+              class="tombol tombol-garis tombol-kecil"
+              @click="isiHariIni"
+            >
+              Hari ini
+            </button>
           </div>
-          <p class="petunjuk" v-if="!tampilGalat('tanggalKirim')">Tanggal terpilih: <strong>{{ form.tanggalKirim | tanggalPanjang }}</strong></p>
-          <p class="galat" v-if="tampilGalat('tanggalKirim')">{{ tampilGalat('tanggalKirim') }}</p>
+          <p class="petunjuk" v-if="!tampilGalat('tanggalKirim')">
+            Tanggal terpilih:
+            <strong>{{ form.tanggalKirim | tanggalPanjang }}</strong>
+          </p>
+          <p class="galat" v-if="tampilGalat('tanggalKirim')">
+            {{ tampilGalat('tanggalKirim') }}
+          </p>
         </div>
 
         <div class="kolom">
           <label for="in-total">Total harga</label>
-          <input id="in-total" :value="(form.paket ? form.total : 0) | rupiah" readonly>
+          <input
+            id="in-total"
+            :value="(form.paket ? form.total : 0) | rupiah"
+            readonly
+          />
         </div>
       </div>
 
-      <p class="galat" v-if="sudahCoba && !valid" role="alert">Masih ada isian yang belum benar. Periksa pesan merah di atas.</p>
+      <p class="galat" v-if="sudahCoba && !valid" role="alert">
+        Masih ada isian yang belum benar. Periksa pesan merah di atas.
+      </p>
       <div class="baris-aksi">
-        <button type="submit" class="tombol tombol-utama">Simpan Delivery Order</button>
-        <span class="teks-kecil">Tekan Enter di kolom isian untuk menyimpan.</span>
+        <button type="submit" class="tombol tombol-utama">
+          Simpan Delivery Order
+        </button>
+        <span class="teks-kecil"
+          >Tekan Enter di kolom isian untuk menyimpan.</span
+        >
       </div>
     </form>
   </section>

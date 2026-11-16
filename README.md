@@ -1,4 +1,4 @@
-# SITTA — Tugas Praktik 3 (Vue Component & Template) — STSI4209
+# SITTA Tugas Praktik 3 (Vue Component & Template) STSI4209
 
 Disusun oleh Rendi Dwi Kurniasandi, NIM 055320736, Program Studi Sistem Informasi.
 

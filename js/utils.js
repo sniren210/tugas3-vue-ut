@@ -1,4 +1,4 @@
-/* SITTA Vue — utils.js
+/* SITTA Vue   utils.js
    Fungsi bantu murni (tanpa Vue) yang dipakai beberapa komponen.
    Dimuat sebelum filters.js dan semua komponen.
    */

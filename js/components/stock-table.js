@@ -1,4 +1,4 @@
-/* <ba-stock-table> — daftar stok + filter/sort + tambah, ubah, hapus.
+/* <ba-stock-table>   daftar stok + filter/sort + tambah, ubah, hapus.
    Props : items (daftar stok), upbjjList, kategoriList
    Event : simpan {mode, data}, hapus kode
    Data tidak diubah di sini; perubahan dikirim ke induk lewat event (one-way data flow). */
@@ -40,7 +40,7 @@ Vue.component("ba-stock-table", {
       return hitung;
     },
 
-    /* objek { UT-Daerah: total stok } — dirender dengan v-for (nilai, kunci) */
+    /* objek { UT-Daerah: total stok }   dirender dengan v-for (nilai, kunci) */
     totalPerDaerah: function () {
       var total = {};
       this.upbjjList.forEach(function (u) { total[u] = 0; });

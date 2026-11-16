@@ -1,4 +1,4 @@
-/* <status-badge :qty="..." :safety="..."> — penanda status stok (Aman/Menipis/Kosong) */
+/* <status-badge :qty="..." :safety="...">   penanda status stok (Aman/Menipis/Kosong) */
 Vue.component("status-badge", {
   template: "#tpl-badge",
   props: {

@@ -1,4 +1,4 @@
-/* <app-modal :tampil="..." judul="..." @tutup="..."> — kotak dialog umum.
+/* <app-modal :tampil="..." judul="..." @tutup="...">   kotak dialog umum.
    Isi lewat slot bawaan; tombol di bawah lewat slot "footer".
    Keyboard: Esc menutup. Fokus dipindah ke dalam modal dan dikembalikan saat ditutup. */
 Vue.component("app-modal", {

@@ -1,5 +1,5 @@
 /*
-   SITTA Vue — filters.js
+   SITTA Vue   filters.js
    Filter Vue 2 untuk memformat teks di template: {{ nilai | namaFilter }}
    Didaftarkan global sebelum komponen dibuat.
 

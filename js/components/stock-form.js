@@ -1,4 +1,4 @@
-/* <ba-stock-form> — formulir tambah (create) dan ubah (update) stok.
+/* <ba-stock-form>   formulir tambah (create) dan ubah (update) stok.
    Props : mode ("baru" | "edit"), nilai (data awal), items (untuk cek kode ganda),
            kategoriList, upbjjList
    Event : simpan (data siap pakai), batal

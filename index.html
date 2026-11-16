@@ -1,75 +1,126 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SITTA — Bahan Ajar UT-Daerah</title>
-  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-  <!-- Root: tempat Vue di-mount. Routing cukup dengan state `tab`. -->
-  <div id="app" v-cloak>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SITTA Bahan Ajar UT-Daerah</title>
+    <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <!-- Root: tempat Vue di-mount. Routing cukup dengan state `tab`. -->
+    <div id="app" v-cloak>
+      <header class="bar">
+        <div class="bar-dalam">
+          <a class="merek" href="index.html"
+            ><img src="assets/img/logo.svg" alt="" width="26" height="26" />
+            SITTA</a
+          >
+          <nav aria-label="Menu utama" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="String(tab === 'stok')"
+              @click="tab = 'stok'"
+            >
+              Stok
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="String(tab === 'tracking')"
+              @click="tab = 'tracking'"
+            >
+              Tracking DO
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="String(tab === 'order')"
+              @click="tab = 'order'"
+            >
+              Pemesanan
+            </button>
+          </nav>
+        </div>
+      </header>
 
-    <header class="bar">
-      <div class="bar-dalam">
-        <a class="merek" href="index.html"><img src="assets/img/logo.svg" alt="" width="26" height="26"> SITTA</a>
-        <nav aria-label="Menu utama" role="tablist">
-          <button type="button" role="tab" :aria-selected="String(tab === 'stok')" @click="tab = 'stok'">Stok</button>
-          <button type="button" role="tab" :aria-selected="String(tab === 'tracking')" @click="tab = 'tracking'">Tracking DO</button>
-          <button type="button" role="tab" :aria-selected="String(tab === 'order')" @click="tab = 'order'">Pemesanan</button>
-        </nav>
-      </div>
-    </header>
+      <main class="halaman">
+        <div class="kartu galat-muat" v-if="galatMuat" role="alert">
+          <h2>Data tidak bisa dimuat</h2>
+          <p>{{ galatMuat }}</p>
+          <p>
+            Aplikasi ini mengambil <code>data/dataBahanAjar.json</code> dan
+            berkas di <code>templates/</code> lewat <code>fetch</code>, sehingga
+            harus dibuka lewat web server lokal, bukan dengan klik dua kali pada
+            <code>index.html</code>.
+          </p>
+          <p>
+            Contoh: jalankan <code>python -m http.server 8000</code> di folder
+            ini lalu buka <code>http://localhost:8000</code>, atau pakai
+            ekstensi Live Server di VS Code.
+          </p>
+        </div>
 
-    <main class="halaman">
-      <div class="kartu galat-muat" v-if="galatMuat" role="alert">
-        <h2>Data tidak bisa dimuat</h2>
-        <p>{{ galatMuat }}</p>
-        <p>Aplikasi ini mengambil <code>data/dataBahanAjar.json</code> dan berkas di <code>templates/</code> lewat <code>fetch</code>, sehingga harus dibuka lewat web server lokal, bukan dengan klik dua kali pada <code>index.html</code>.</p>
-        <p>Contoh: jalankan <code>python -m http.server 8000</code> di folder ini lalu buka <code>http://localhost:8000</code>, atau pakai ekstensi Live Server di VS Code.</p>
-      </div>
+        <p class="memuat" v-else-if="!siap">Memuat data…</p>
 
-      <p class="memuat" v-else-if="!siap">Memuat data…</p>
+        <template v-else>
+          <section v-show="tab === 'stok'">
+            <ba-stock-table
+              :items="state.stok"
+              :upbjj-list="state.upbjjList"
+              :kategori-list="state.kategoriList"
+              @simpan="simpanStok"
+              @hapus="hapusStok"
+            ></ba-stock-table>
+          </section>
 
-      <template v-else>
-        <section v-show="tab === 'stok'">
-          <ba-stock-table :items="state.stok" :upbjj-list="state.upbjjList" :kategori-list="state.kategoriList"
-                          @simpan="simpanStok" @hapus="hapusStok"></ba-stock-table>
-        </section>
+          <section v-show="tab === 'tracking'">
+            <do-tracking
+              :data="state.tracking"
+              :paket="state.paket"
+              :fokus-nomor="fokusNomor"
+              @progress="tambahProgress"
+            ></do-tracking>
+          </section>
 
-        <section v-show="tab === 'tracking'">
-          <do-tracking :data="state.tracking" :paket="state.paket" :fokus-nomor="fokusNomor"
-                       @progress="tambahProgress"></do-tracking>
-        </section>
+          <section v-show="tab === 'order'">
+            <order-form
+              :paket="state.paket"
+              :ekspedisi="state.pengirimanList"
+              :stok="state.stok"
+              :nomor-do="nomorDOBerikutnya"
+              @created="handleNewDO"
+            ></order-form>
+          </section>
+        </template>
+      </main>
 
-        <section v-show="tab === 'order'">
-          <order-form :paket="state.paket" :ekspedisi="state.pengirimanList" :stok="state.stok"
-                      :nomor-do="nomorDOBerikutnya" @created="handleNewDO"></order-form>
-        </section>
-      </template>
-    </main>
+      <footer class="kaki">
+        SITTA Tugas Praktik 3 (STSI4209) · Rendi Dwi Kurniasandi · NIM 055320736
+      </footer>
 
-    <footer class="kaki">SITTA — Tugas Praktik 3 (STSI4209) · Rendi Dwi Kurniasandi · NIM 055320736</footer>
+      <div class="toast" role="status" v-if="toast">{{ toast }}</div>
+    </div>
 
-    <div class="toast" role="status" v-if="toast">{{ toast }}</div>
-  </div>
-
-  <!-- Template komponen (templates/*.html) disisipkan otomatis oleh js/services/api.js
+    <!-- Template komponen (templates/*.html) disisipkan otomatis oleh js/services/api.js
        sebagai <template id="tpl-stock">, tpl-stock-form, tpl-tracking, tpl-order, tpl-badge, tpl-modal -->
 
-  <!-- Scripts (urutan penting) -->
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
-  <script>window.Vue || document.write('<script src="js/vendor/vue.min.js"><\/script>');</script>
-  <script src="js/utils.js"></script>
-  <script src="js/filters.js"></script>
-  <script src="js/services/api.js"></script>
-  <script src="js/components/status-badge.js"></script>
-  <script src="js/components/app-modal.js"></script>
-  <script src="js/components/stock-form.js"></script>
-  <script src="js/components/stock-table.js"></script>
-  <script src="js/components/order-form.js"></script>
-  <script src="js/components/do-tracking.js"></script>
-  <script src="js/app.js"></script>
-</body>
+    <!-- Scripts (urutan penting) -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+    <script>
+      window.Vue ||
+        document.write('<script src="js/vendor/vue.min.js"><\/script>');
+    </script>
+    <script src="js/utils.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/services/api.js"></script>
+    <script src="js/components/status-badge.js"></script>
+    <script src="js/components/app-modal.js"></script>
+    <script src="js/components/stock-form.js"></script>
+    <script src="js/components/stock-table.js"></script>
+    <script src="js/components/order-form.js"></script>
+    <script src="js/components/do-tracking.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>

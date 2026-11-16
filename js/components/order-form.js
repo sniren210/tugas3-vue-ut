@@ -1,4 +1,4 @@
-/* <order-form> — formulir Delivery Order baru.
+/* <order-form>   formulir Delivery Order baru.
    Props : paket, ekspedisi (pengirimanList), stok (judul & harga isi paket), nomorDo (otomatis dari induk)
    Event : created (objek DO baru)
    Keyboard: Enter di kolom isian = simpan. */

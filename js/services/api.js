@@ -1,8 +1,8 @@
 /*
-   SITTA Vue — services/api.js
+   SITTA Vue   services/api.js
    Lapisan akses data: mengambil JSON dan file template lewat fetch,
    lalu merapikan bentuk data agar mudah dipakai komponen.
-   Catatan: fetch tidak jalan lewat file:// — buka dengan web server lokal.
+   Catatan: fetch tidak jalan lewat file://   buka dengan web server lokal.
  */
 var Api = (function () {
   var URL_DATA = "data/dataBahanAjar.json";
