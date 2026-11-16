@@ -1,0 +1,6 @@
+<span class="status" :class="'status-' + status">
+  <span aria-hidden="true" v-if="status === 'kosong'">⛔</span>
+  <span aria-hidden="true" v-else-if="status === 'menipis'">⚠️</span>
+  <span aria-hidden="true" v-else>✅</span>
+  {{ label }}
+</span>

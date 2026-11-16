@@ -1,0 +1,135 @@
+<div class="tracking">
+  <div class="judul-halaman">
+    <h1>Tracking Delivery Order</h1>
+    <p>Cari berdasarkan nomor DO atau NIM. Tekan <kbd>Enter</kbd> untuk mencari dan <kbd>Esc</kbd> untuk mengosongkan pencarian.</p>
+  </div>
+
+  <!-- Pencarian -->
+  <section class="kartu" aria-labelledby="judul-cari" role="search">
+    <h2 id="judul-cari">Cari Delivery Order</h2>
+
+    <fieldset class="kolom" style="border:0;padding:0;margin:0 0 .9rem">
+      <legend class="label" style="padding:0">Cari berdasarkan</legend>
+      <div class="pilihan-radio">
+        <label><input type="radio" value="nomor" v-model="modus"> Nomor DO</label>
+        <label><input type="radio" value="nim" v-model="modus"> NIM</label>
+      </div>
+    </fieldset>
+
+    <div class="kolom" :class="{ 'ada-galat': galat }" style="max-width:560px">
+      <label for="kata-cari">{{ modus === 'nomor' ? 'Nomor DO' : 'NIM' }}</label>
+      <div class="baris-sebaris">
+        <input id="kata-cari" ref="kolomCari" v-model.trim="kata"
+               :placeholder="modus === 'nomor' ? 'contoh: DO2025-0001' : 'contoh: 123456789'"
+               autocomplete="off" @keyup.enter="cari" @keyup.esc="reset">
+        <button type="button" class="tombol tombol-utama" @click="cari">Cari</button>
+        <button type="button" class="tombol tombol-garis" @click="reset">Reset</button>
+      </div>
+      <p class="galat" v-if="galat" role="alert">{{ galat }}</p>
+    </div>
+  </section>
+
+  <!-- Detail DO terpilih -->
+  <section id="detail-do" v-if="detailDO" aria-live="polite">
+    <div class="kepala-hasil">
+      <div>
+        <h2>{{ detailDO.nama }}</h2>
+        <p>No. DO {{ detailDO.nomor }} · NIM {{ detailDO.nim }}</p>
+      </div>
+      <div>
+        <span class="lencana lencana-proses" v-if="detailDO.status === 'Diproses'">Diproses</span>
+        <span class="lencana lencana-jalan" v-else-if="detailDO.status === 'Dalam Perjalanan'">Dalam Perjalanan</span>
+        <span class="lencana lencana-selesai" v-else-if="detailDO.status === 'Selesai'">Selesai</span>
+        <span class="lencana lencana-proses" v-else>{{ detailDO.status }}</span>
+      </div>
+    </div>
+
+    <div class="badan-hasil">
+      <h3>Status pengiriman</h3>
+      <ol class="tahapan" aria-label="Status pengiriman">
+        <li v-for="(langkah, i) in langkahStatus" :key="langkah"
+            :class="{ selesai: i < indeksStatus || (i === indeksStatus && langkah === 'Selesai'), aktif: i === indeksStatus && langkah !== 'Selesai' }"
+            :aria-current="i === indeksStatus ? 'step' : null">{{ langkah }}</li>
+      </ol>
+
+      <h3>Detail pengiriman</h3>
+      <dl class="kisi-info">
+        <div><dt>Ekspedisi</dt><dd>{{ detailDO.ekspedisi }}</dd></div>
+        <div><dt>Tanggal kirim</dt><dd>{{ detailDO.tanggalKirim | tanggalPanjang }}</dd></div>
+        <div><dt>Paket bahan ajar</dt><dd>{{ namaPaket(detailDO.paket) }}</dd></div>
+        <div><dt>Total pembayaran</dt><dd>{{ detailDO.total | rupiah }}</dd></div>
+      </dl>
+
+      <h3>Perjalanan paket</h3>
+      <p class="teks-kecil" v-if="perjalananTerbaru.length === 0">Belum ada catatan perjalanan.</p>
+      <ol class="linimasa" v-else>
+        <li v-for="(p, i) in perjalananTerbaru" :key="i">
+          <span>{{ p.keterangan }}</span>
+          <time :datetime="p.waktu.replace(' ', 'T')">{{ p.waktu | waktuPendek }}</time>
+        </li>
+      </ol>
+
+      <!-- Tambah progress perjalanan -->
+      <h3>Tambah progress perjalanan</h3>
+      <div class="alat-progress">
+        <div class="kolom" :class="{ 'ada-galat': galatProgress }">
+          <label for="ket-progress">Keterangan</label>
+          <input id="ket-progress" v-model.trim="progress.keterangan" placeholder="contoh: Tiba di Hub JAKSEL"
+                 autocomplete="off" @keyup.enter="tambahProgress">
+        </div>
+        <div class="kolom">
+          <label for="status-progress">Status DO</label>
+          <select id="status-progress" v-model="progress.status">
+            <option v-for="s in langkahStatus" :key="s" :value="s">{{ s }}</option>
+          </select>
+        </div>
+        <div class="kolom">
+          <button type="button" class="tombol tombol-utama" @click="tambahProgress">Tambah progress</button>
+        </div>
+      </div>
+      <p class="galat" v-if="galatProgress" role="alert">{{ galatProgress }}</p>
+      <p class="teks-kecil">Waktu dicatat otomatis dari jam perangkat saat tombol ditekan atau Enter dipakai.</p>
+    </div>
+  </section>
+
+  <!-- Daftar DO -->
+  <section aria-labelledby="judul-daftar">
+    <h2 id="judul-daftar">{{ sudahCari ? 'Hasil pencarian (' + daftarTampil.length + ')' : 'Semua Delivery Order (' + daftarTampil.length + ')' }}</h2>
+
+    <div class="kartu kosong-data" v-if="daftarTampil.length === 0">
+      <p>Tidak ada Delivery Order dengan {{ modus === 'nomor' ? 'nomor' : 'NIM' }} <strong>{{ terapkan }}</strong>.</p>
+      <button type="button" class="tombol tombol-garis" @click="reset">Tampilkan semua</button>
+    </div>
+
+    <div class="tabel-bungkus" v-else>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="angka">No</th>
+            <th scope="col">No. DO</th>
+            <th scope="col">NIM</th>
+            <th scope="col">Mahasiswa</th>
+            <th scope="col">Paket</th>
+            <th scope="col">Tanggal kirim</th>
+            <th scope="col" class="angka">Total</th>
+            <th scope="col">Status</th>
+            <th scope="col">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(d, index) in daftarTampil" :key="d.nomor" :class="{ tersorot: d.nomor === dipilih }">
+            <td class="angka">{{ index + 1 }}</td>
+            <td><span class="kode">{{ d.nomor }}</span></td>
+            <td>{{ d.nim }}</td>
+            <td>{{ d.nama }}</td>
+            <td>{{ namaPaket(d.paket) }}</td>
+            <td>{{ d.tanggalKirim | tanggalPanjang }}</td>
+            <td class="angka">{{ d.total | rupiah }}</td>
+            <td>{{ d.status }}</td>
+            <td><button type="button" class="tombol tombol-garis tombol-kecil" @click="lihat(d.nomor)">Lihat</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

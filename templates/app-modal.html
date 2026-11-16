@@ -1,0 +1,14 @@
+<div class="tirai" v-if="tampil" @click.self="tutup" @keydown.esc.stop="tutup">
+  <div class="modal" :class="'modal-' + ukuran" ref="kotak" role="dialog" aria-modal="true" :aria-labelledby="idJudul" tabindex="-1">
+    <div class="modal-kepala">
+      <h2 :id="idJudul">{{ judul }}</h2>
+      <button type="button" class="modal-tutup" aria-label="Tutup" @click="tutup">✕</button>
+    </div>
+    <div ref="badan">
+      <slot></slot>
+    </div>
+    <div class="modal-kaki" v-if="$slots.footer">
+      <slot name="footer"></slot>
+    </div>
+  </div>
+</div>

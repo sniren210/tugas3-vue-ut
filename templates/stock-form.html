@@ -1,0 +1,73 @@
+<form @submit.prevent="simpan" @keydown.enter="tekanEnter" novalidate>
+  <div class="kisi-form">
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('kode') }">
+      <label :for="id('kode')">Kode mata kuliah</label>
+      <input :id="id('kode')" v-model="form.kode" :readonly="mode === 'edit'" @blur="sentuh('kode')" placeholder="EKMA4116" autocomplete="off">
+      <p class="galat" v-if="tampilGalat('kode')">{{ tampilGalat('kode') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('judul') }">
+      <label :for="id('judul')">Judul / nama mata kuliah</label>
+      <input :id="id('judul')" v-model="form.judul" @blur="sentuh('judul')" autocomplete="off">
+      <p class="galat" v-if="tampilGalat('judul')">{{ tampilGalat('judul') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('kategori') }">
+      <label :for="id('kategori')">Kategori</label>
+      <select :id="id('kategori')" v-model="form.kategori" @blur="sentuh('kategori')">
+        <option value="">Pilih kategori</option>
+        <option v-for="k in kategoriList" :key="k" :value="k">{{ k }}</option>
+      </select>
+      <p class="galat" v-if="tampilGalat('kategori')">{{ tampilGalat('kategori') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('upbjj') }">
+      <label :for="id('upbjj')">UT-Daerah</label>
+      <select :id="id('upbjj')" v-model="form.upbjj" @blur="sentuh('upbjj')">
+        <option value="">Pilih UT-Daerah</option>
+        <option v-for="u in upbjjList" :key="u" :value="u">{{ u }}</option>
+      </select>
+      <p class="galat" v-if="tampilGalat('upbjj')">{{ tampilGalat('upbjj') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('lokasiRak') }">
+      <label :for="id('rak')">Lokasi rak</label>
+      <input :id="id('rak')" v-model="form.lokasiRak" @blur="sentuh('lokasiRak')" placeholder="R1-A3" autocomplete="off">
+      <p class="galat" v-if="tampilGalat('lokasiRak')">{{ tampilGalat('lokasiRak') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('harga') }">
+      <label :for="id('harga')">Harga (Rp)</label>
+      <input :id="id('harga')" v-model="form.harga" inputmode="numeric" @blur="sentuh('harga')" placeholder="65000" autocomplete="off">
+      <p class="petunjuk" v-if="!tampilGalat('harga') && hargaAngka">Tampil sebagai {{ hargaAngka | rupiah }}</p>
+      <p class="galat" v-if="tampilGalat('harga')">{{ tampilGalat('harga') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('qty') }">
+      <label :for="id('qty')">Jumlah stok (buah)</label>
+      <input :id="id('qty')" v-model="form.qty" inputmode="numeric" @blur="sentuh('qty')" autocomplete="off">
+      <p class="galat" v-if="tampilGalat('qty')">{{ tampilGalat('qty') }}</p>
+    </div>
+
+    <div class="kolom" :class="{ 'ada-galat': tampilGalat('safety') }">
+      <label :for="id('safety')">Safety stock (buah)</label>
+      <input :id="id('safety')" v-model="form.safety" inputmode="numeric" @blur="sentuh('safety')" autocomplete="off">
+      <p class="galat" v-if="tampilGalat('safety')">{{ tampilGalat('safety') }}</p>
+    </div>
+
+    <div class="kolom penuh" :class="{ 'ada-galat': tampilGalat('catatanHTML') }">
+      <label :for="id('catatan')">Catatan (opsional)</label>
+      <textarea :id="id('catatan')" rows="2" v-model="form.catatanHTML" @blur="sentuh('catatanHTML')"></textarea>
+      <p class="petunjuk">Boleh memakai tag &lt;em&gt;, &lt;strong&gt;, &lt;i&gt;, &lt;b&gt;, &lt;u&gt;, &lt;br&gt;. Tag lain tampil sebagai teks. Tekan Enter di kolom lain untuk menyimpan.</p>
+      <p class="galat" v-if="tampilGalat('catatanHTML')">{{ tampilGalat('catatanHTML') }}</p>
+      <div class="pratinjau" v-if="form.catatanHTML" v-html="pratinjau"></div>
+    </div>
+  </div>
+
+  <p class="galat" v-if="sudahCoba && !valid" role="alert">Masih ada isian yang belum benar. Periksa pesan merah di atas.</p>
+
+  <div class="modal-kaki">
+    <button type="button" class="tombol tombol-garis" @click="$emit('batal')">Batal</button>
+    <button type="submit" class="tombol tombol-utama">{{ mode === 'baru' ? 'Simpan bahan ajar' : 'Simpan perubahan' }}</button>
+  </div>
+</form>
